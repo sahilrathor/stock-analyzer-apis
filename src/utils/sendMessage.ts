@@ -1,93 +1,38 @@
-// // // const { Client } = require('whatsapp-web.js');
-// // // const qrcode = require('qrcode-terminal');
-// // import {Client} from 'whatsapp-web.js'
-// // import {qrcode} from 'qrcode-terminal'
+import axios from "axios";
+import envConfig from "../config/envConfig";
+import { TelegramMessageInterface, TelegramMessagePayloadInterface } from "../types/telegramMessageInterface";
 
-// // const client = new Client();
-
-// // client.on('qr', (qr: any) => {
-// //     qrcode.generate(qr, { small: true });
-// //     console.log('Scan this QR code with your phone to log in');
-// // });
-
-// // client.on('ready', () => {
-// //     console.log('Client is ready!');
-// // });
-
-// // client.on('message', (message: any) => {
-// //     console.log(`Received message: ${message.body}`);
-
-// //     // Example: Auto reply to "ping"
-// //     if (message.body.toLowerCase() === 'ping') {
-// //         message.reply('pong');
-// //     }
-// // });
-
-// // client.initialize();
-
-// // src/whatsapp/client.ts
-// import { Client, LocalAuth, Message } from 'whatsapp-web.js';
-// import qrcode from 'qrcode-terminal';
-
-// const client = new Client({
-//   authStrategy: new LocalAuth(),
-// });
-
-// let isClientReady = false;
-
-// client.on('qr', (qr: string) => {
-//   qrcode.generate(qr, { small: true });
-//   console.log('Scan this QR code with your phone to log in');
-// });
-
-// client.on('ready', () => {
-//   console.log('✅ WhatsApp client is ready!');
-//   isClientReady = true;
-// });
-
-// client.on('message', async (message: Message) => {
-//   console.log(`💬 Message received: ${message.body}`);
-
-//   if (message.body.toLowerCase() === 'ping') {
-//     await message.reply('pong');
-//   }
-// });
-
-// client.initialize();
-// export { client, isClientReady };
+const BOT_TOKEN = envConfig.TELEGRAM_BOT_TOKEN;
+const CHAT_ID = envConfig.TELEGRAM_CHAT_ID;
 
 
-import { Client, LocalAuth } from 'whatsapp-web.js';
-import qrcode from 'qrcode-terminal';
+const sendTelegramMessage = async (message: TelegramMessageInterface) => {
+    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
 
-console.log('⏳ Creating WhatsApp client...');
+    if (!BOT_TOKEN || !CHAT_ID) {
+        console.error("Telegram bot token or chat ID not found");
+        return;
+    }
 
-const client = new Client({
-  authStrategy: new LocalAuth(),
-  puppeteer: {
-    headless: false, // open browser
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
-  },
-});
+    if (!message.text) {
+        console.error("Message not found");
+        return;
+    }
 
-console.log('🚀 Initializing WhatsApp client...');
-client.initialize(); // ⬅️ This MUST run
+    const payload: TelegramMessagePayloadInterface = {
+        chat_id: CHAT_ID,
+        text: message.text,
+        parse_mode: message.parse_mode || "MarkdownV2",
+        reply_markup: message.reply_markup || undefined
+    }
 
-client.on('qr', (qr) => {
-  console.log('📱 QR Code received');
-  qrcode.generate(qr, { small: true });
-});
 
-client.on('authenticated', () => {
-  console.log('🔓 Authenticated successfully');
-});
+    try {
+        const res = await axios.post(url, payload);
+        console.log("Message sent:", res.data);
+    } catch (error: any) {
+        console.error("Error sending Telegram message:", error.response?.data || error.message);
+    }
+};
 
-client.on('auth_failure', (msg) => {
-  console.error('❌ Authentication failed:', msg);
-});
-
-client.on('ready', () => {
-  console.log('✅ WhatsApp client is ready!');
-});
-
-export { client };
+export default sendTelegramMessage;

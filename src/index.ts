@@ -4,6 +4,7 @@ import envConfig from "./config/envConfig";
 import figletText from "./utils/figlet";
 import routerConfig from "./config/routerConfig";
 import { corsMiddleware } from "./middlewares/cors";
+import sendTelegramMessage from "./utils/sendMessage";
 
 dotenv.config();
 const app = express();
@@ -21,4 +22,5 @@ app.get("/", (req: Request, res: Response) => {
 app.listen(PORT, () => {
     console.log(figletText);
     console.log(`Server is running on http://localhost:${PORT}`);
+    sendTelegramMessage({ text: "Server is running" });
 });
