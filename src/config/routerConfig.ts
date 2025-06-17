@@ -1,11 +1,15 @@
 import express from "express";
-import authRoutes from "../routes/authRoutes";
 import { routeInterface } from "../types/routeInterface";
+import authRoutes from "../routes/authRoutes";
+import upstoxLoginRoutes from "../routes/upstox/loginRoutes";
+import upstoxServiceRoutes from "../routes/upstox/serviceRoutes";
 
 const router = express.Router();
 const routes: routeInterface[] = [];
 
 routes.push(...authRoutes);
+routes.push(...upstoxLoginRoutes);
+routes.push(...upstoxServiceRoutes);
 
 routes.forEach(route => {
     if(route.method === "GET") {
