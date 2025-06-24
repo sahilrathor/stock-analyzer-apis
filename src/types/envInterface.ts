@@ -7,4 +7,9 @@ export interface EnvInterface {
     UPSTOX_API_SECRET: string;
     UPSTOX_REDIRECT_URI: string;
     UPSTOX_BASE_URL: string;
+    PG_HOST: string;
+    PG_PORT: number;
+    PG_DATABASE: string;
+    PG_USER: string;
+    PG_PASSWORD: string;
 }

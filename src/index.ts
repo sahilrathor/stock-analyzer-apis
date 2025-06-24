@@ -6,6 +6,7 @@ import routerConfig from "./config/routerConfig";
 import { corsMiddleware } from "./middlewares/cors";
 import sendTelegramMessage from "./utils/sendMessage";
 import cookieParser from "cookie-parser";
+import dbConnect from "./db/dbConnect";
 
 dotenv.config();
 const app = express();
@@ -24,5 +25,6 @@ app.get("/", (req: Request, res: Response) => {
 app.listen(PORT, () => {
     console.log(figletText);
     console.log(`Server is running on http://localhost:${PORT}`);
+    dbConnect;
     // sendTelegramMessage({ text: "Server is running" });
 });

@@ -1,6 +1,6 @@
 import express from "express";
 import { routeInterface } from "../types/routeInterface";
-import authRoutes from "../routes/authRoutes";
+import authRoutes from "../routes/auth/authRoutes";
 import upstoxLoginRoutes from "../routes/upstox/loginRoutes";
 import upstoxServiceRoutes from "../routes/upstox/serviceRoutes";
 
@@ -12,6 +12,7 @@ routes.push(...upstoxLoginRoutes);
 routes.push(...upstoxServiceRoutes);
 
 routes.forEach(route => {
+    // console.log(route);
     if(route.method === "GET") {
         router.get(route.path, route.handler);
     } else if(route.method === "POST") {
