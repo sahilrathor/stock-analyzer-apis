@@ -78,21 +78,17 @@ class AuthService {
     static async getProfile(req: Request, res: Response) {
         try {
             const token = req.cookies.token;
-            if (!token || token === "") {
-                return res.status(401).json({ message: "Unauthorized" });
-            }
+            // fix it later ----- should take user id from token(req.user.token)
             const decodedToken = verifyToken(token);
-            // const decodedToken = {
-            //     email: "test@gmail.com"
-            // }
 
             const user = await pool.query("SELECT id, name, email, create_at FROM users WHERE email = $1", [
                 decodedToken.email,
             ]);
+
             return res.status(200).json(user.rows[0]);
         } catch (error) {
             console.log(error);
-            return res.status(500).send("Internal Server Error");
+            return res.status(500).json({message: "Internal Server Error"});
         }
     }
 }

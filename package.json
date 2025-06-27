@@ -22,7 +22,8 @@
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.16.1",
     "qrcode-terminal": "^0.12.0",
-    "whatsapp-web.js": "^1.16.4-alpha.0"
+    "whatsapp-web.js": "^1.16.4-alpha.0",
+    "yahoo-finance2": "^2.13.3"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",

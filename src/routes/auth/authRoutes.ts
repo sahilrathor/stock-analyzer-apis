@@ -1,3 +1,4 @@
+import { authenticateToken } from "../../middlewares/authenticateToken";
 import AuthService from "../../services/auth/auth";
 import { routeInterface } from "../../types/routeInterface";
 
@@ -18,9 +19,10 @@ const authRoutes: routeInterface[] = [
         handler: AuthService.register,
     },
     {
-        path: "/auth/get-profile",
+        path: "/auth/me",
         method: "GET",
         handler: AuthService.getProfile,
+        middlewares: [authenticateToken]
     }
 ];
 
