@@ -3,6 +3,20 @@ import pool from "../../db/dbConnect";
 import yFinance from "../../external-services/yahoo-finance/yahooFinance";
 
 class StockService {
+    static async getStocks(req: Request, res: Response) {
+        try {
+            const result = await pool.query("SELECT id, name, symbol, exchange, sector, industory FROM stocks");
+            return res.status(200).json({
+                message: "Stocks fetched successfully",
+                stocksCount: result.rowCount,
+                stocks: result.rows,
+            });
+        } catch (error: any) {
+            console.log("searchStock error:", error);
+            return res.status(500).json({ message: "Internal Server Error" });
+        }
+    }
+
     static async searchStock(req: Request, res: Response) {
         const { query } = req.query;
         if (!query) {
@@ -69,10 +83,9 @@ class StockService {
             return res.status(400).json({ message: "missing field: id" });
         }
 
-        const result = await pool.query("SELECT symbol FROM stocks WHERE id = $1", [id])
+        const result = await pool.query("SELECT symbol FROM stocks WHERE id = $1", [id]);
         // console.log('res:', result)
-        const symbol = result.rows[0].symbol
-
+        const symbol = result.rows[0].symbol;
 
         try {
             const result = await yFinance.quoteSymbol(symbol as string);

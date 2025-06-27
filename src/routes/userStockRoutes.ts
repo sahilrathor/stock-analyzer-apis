@@ -4,15 +4,21 @@ import { routeInterface } from "../types/routeInterface";
 
 const userStockRoutes: routeInterface[] = [
     {
-        path: "/user/stock/add",
+        path: "/user/stocks/add",
         method: "POST",
         handler: UserStockService.addStock,
         middlewares: [authenticateToken]
     },
     {
-        path: "/user/stock/remove/:id",
-        method: "GET",
+        path: "/user/stocks/remove/:id",
+        method: "DELETE",
         handler: UserStockService.removeStock,
+        middlewares: [authenticateToken]
+    },
+    {
+        path: "/user/stocks",
+        method: "GET",
+        handler: UserStockService.getStocks,
         middlewares: [authenticateToken]
     },
 ];

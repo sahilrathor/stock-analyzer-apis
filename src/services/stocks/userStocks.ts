@@ -18,13 +18,16 @@ class UserStockService {
 
         try {
             if (alreadyExists.rowCount !== 0) {
-                const prevData = alreadyExists.rows[0]
+                const prevData = alreadyExists.rows[0];
                 const currentBuyPrice = quantity * buyPrice;
                 const prevBuyPrice = prevData.quantity * prevData.average_buy_price;
                 const totalQuantity = Number(quantity) + Number(prevData.quantity);
-                const averageBuyPrice = (currentBuyPrice + prevBuyPrice)/totalQuantity
+                const averageBuyPrice = (currentBuyPrice + prevBuyPrice) / totalQuantity;
 
-                await pool.query("UPDATE user_stocks SET quantity = $1, average_buy_price = $2 WHERE user_id = $3 AND stock_id = $4", [totalQuantity, averageBuyPrice, userId, stockId])
+                await pool.query(
+                    "UPDATE user_stocks SET quantity = $1, average_buy_price = $2 WHERE user_id = $3 AND stock_id = $4",
+                    [totalQuantity, averageBuyPrice, userId, stockId]
+                );
 
                 return res.status(201).json({
                     message: "Stock updated successfully",
@@ -42,6 +45,28 @@ class UserStockService {
             }
         } catch (error: any) {
             console.log("addStock error:", error);
+            return res.status(500).json({ message: "Internal Server Error" });
+        }
+    }
+
+    static async getStocks(req: Request, res: Response) {
+        const userId = req.user?.id;
+
+        if (!userId) {
+            return res.status(400).json({ message: "invalid token" });
+        }
+
+        try {
+            const result = await pool.query("SELECT * FROM user_stocks WHERE user_id = $1", [userId]);
+
+            res.status(200).json({
+                message: "Stocks fetched successfully",
+                stocksCount: result.rowCount,
+                stocks: result.rows,
+            })
+            
+        } catch (error: any) {
+            console.log("getStocks error:", error);
             return res.status(500).json({ message: "Internal Server Error" });
         }
     }
@@ -68,7 +93,6 @@ class UserStockService {
             return res.status(200).json({ message: "Internal Server Error" });
         }
     }
-
 }
 
 export default UserStockService;

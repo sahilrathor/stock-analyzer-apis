@@ -1,24 +1,32 @@
+import { authenticateToken } from "../middlewares/authenticateToken";
 import StockService from "../services/stocks/stocks";
 import { routeInterface } from "../types/routeInterface";
 
 const stockRoutes: routeInterface[] = [
     {
-        path: "/stock/search",
+        path: "/stocks",
+        method: "GET",
+        handler: StockService.getStocks,
+    },
+    {
+        path: "/stocks/search",
         method: "GET",
         handler: StockService.searchStock,
     },
     {
-        path: "/stock/add",
+        path: "/stocks/add",
         method: "POST",
         handler: StockService.addStock,
+        middlewares: [authenticateToken]
     },
     {
-        path: "/stock/remove/:id",
-        method: "GET",
+        path: "/stocks/remove/:id",
+        method: "DELETE",
         handler: StockService.removeStock,
+        middlewares: [authenticateToken]
     },
     {
-        path: "/stock/:id",
+        path: "/stocks/:id",
         method: "GET",
         handler: StockService.getQuoteinfo,
     },
