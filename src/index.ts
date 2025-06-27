@@ -7,6 +7,7 @@ import { corsMiddleware } from "./middlewares/cors";
 import sendTelegramMessage from "./utils/sendMessage";
 import cookieParser from "cookie-parser";
 import dbConnect from "./db/dbConnect";
+import "./types/express"
 
 dotenv.config();
 const app = express();

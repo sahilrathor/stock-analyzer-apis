@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { generateToken, verifyToken } from "../../utils/jwtToken";
 import pool from "../../db/dbConnect";
 import { compareHash, generateHash } from "../../utils/hash";
-import { UserInterface } from "../../types/userInterface";
+import { tokenPayloadInterface, UserInterface } from "../../types/userInterface";
 
 const User = pool.query("SELECT * FROM users");
 
@@ -76,13 +76,10 @@ class AuthService {
     }
 
     static async getProfile(req: Request, res: Response) {
+        const userData = req.user || {} as tokenPayloadInterface;
         try {
-            const token = req.cookies.token;
-            // fix it later ----- should take user id from token(req.user.token)
-            const decodedToken = verifyToken(token);
-
-            const user = await pool.query("SELECT id, name, email, create_at FROM users WHERE email = $1", [
-                decodedToken.email,
+            const user = await pool.query("SELECT id, name, email, create_at FROM users WHERE id = $1", [
+                userData.id,
             ]);
 
             return res.status(200).json(user.rows[0]);

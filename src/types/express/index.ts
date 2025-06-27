@@ -1,5 +1,5 @@
 import { JwtPayload } from "jsonwebtoken";
-import { tokenPayloadInterface } from "../../types/userInterface";
+import { tokenPayloadInterface } from "../userInterface";
 
 declare global {
     namespace Express {
@@ -8,3 +8,5 @@ declare global {
         }
     }
 }
+
+export {};

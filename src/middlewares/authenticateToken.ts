@@ -9,7 +9,6 @@ import { verifyToken } from "../utils/jwtToken";
 
 export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers["authorization"];
-    console.log('middleware working')
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res.status(401).json({ message: "Missing or invalid Authorization header" });
@@ -19,9 +18,7 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
 
     try {
         const decoded = verifyToken(token);
-        console.log(decoded)
-        // req.user = decoded;
-        // console.log('middleware:', req.user)
+        req.user = decoded;
         next();
     } catch (error) {
         return res.status(401).json({ message: "Invalid or expired token" });

@@ -9,6 +9,12 @@ const userStockRoutes: routeInterface[] = [
         handler: UserStockService.addStock,
         middlewares: [authenticateToken]
     },
+    {
+        path: "/user/stock/remove/:id",
+        method: "GET",
+        handler: UserStockService.removeStock,
+        middlewares: [authenticateToken]
+    },
 ];
 
 export default userStockRoutes;
