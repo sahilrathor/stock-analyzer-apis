@@ -4,8 +4,6 @@ import pool from "../../db/dbConnect";
 import { compareHash, generateHash } from "../../utils/hash";
 import { tokenPayloadInterface, UserInterface } from "../../types/userInterface";
 
-const User = pool.query("SELECT * FROM users");
-
 class AuthService {
     static async register(req: Request, res: Response) {
         const { name, email, password } = req.body;
