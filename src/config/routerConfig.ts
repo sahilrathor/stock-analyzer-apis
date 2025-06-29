@@ -1,38 +1,3 @@
-// import express from "express";
-// import { routeInterface } from "../types/routeInterface";
-// import upstoxLoginRoutes from "../routes/upstox/loginRoutes";
-// import upstoxServiceRoutes from "../routes/upstox/serviceRoutes";
-// import stockRoutes from "../routes/stockRoutes";
-// import authRoutes from "../routes/auth/authRoutes";
-// import userStockRoutes from "../routes/userStockRoutes";
-
-// const router = express.Router();
-// const routes: routeInterface[] = [];
-
-// routes.push(...authRoutes);
-// routes.push(...upstoxLoginRoutes);
-// routes.push(...upstoxServiceRoutes);
-// routes.push(...stockRoutes);
-// routes.push(...userStockRoutes);
-
-// routes.forEach(route => {
-//     const {method, path, handler, middlewares = []} = route;
-
-//     // console.log(route);
-//     if(method === "GET") {
-//         router.get(path, ...middlewares, handler);
-//     } else if(route.method === "POST") {
-//         router.post(path, ...middlewares, handler);
-//     } else if(route.method === "PUT") {
-//         router.put(path, ...middlewares, handler);
-//     } else if(route.method === "DELETE") {
-//         router.delete(path, ...middlewares, handler);
-//     }
-// });
-
-// export default router;
-
-
 import express from "express";
 import path from "path";
 import fs from "fs-extra";
@@ -44,10 +9,15 @@ import stockRoutes from "../routes/stockRoutes";
 import authRoutes from "../routes/auth/authRoutes";
 import userStockRoutes from "../routes/userStockRoutes";
 
+// express router
 const router = express.Router();
+// routes to be live
 const routes: routeInterface[] = [];
+// routes details to write in file
 const registeredRoutes: any = [];
 
+
+// serialize routes
 const serializeRoutes = (route: routeInterface) => ({
     path: route.path,
     method: route.method,
@@ -55,6 +25,7 @@ const serializeRoutes = (route: routeInterface) => ({
     middlewares: route.middlewares?.map((m) => m.name || "anonymous") || [],
 });
 
+// will map routes from files to activate them and write info in file
 const registerRoute = (routesList: RoutesInfoInterface[]) => {
     routesList.forEach((data) => {
         const serializedRoutes = data.routes.map(serializeRoutes);
@@ -69,8 +40,11 @@ const registerRoute = (routesList: RoutesInfoInterface[]) => {
     });
 };
 
+// registering routes
 registerRoute([authRoutes, stockRoutes, userStockRoutes, upstoxLoginRoutes, upstoxServiceRoutes]);
 
+
+// routes mapping
 routes.forEach((route) => {
     const { method, path, handler, middlewares = [] } = route;
 
@@ -90,7 +64,7 @@ routes.forEach((route) => {
     }
 });
 
-// Write to a JSON file using fs-extra
+// Writing JSON file
 const outputDir = path.join(__dirname, "./generated");
 const outputFile = path.join(outputDir, "routes.json");
 

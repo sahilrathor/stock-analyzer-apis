@@ -29,7 +29,7 @@ const sendTelegramMessage = async (message: TelegramMessageInterface) => {
 
     try {
         const res = await axios.post(url, payload);
-        console.log("Message sent:", res.data);
+        // console.log("Message sent:", res.data);
     } catch (error: any) {
         console.error("Error sending Telegram message:", error.response?.data || error.message);
     }
