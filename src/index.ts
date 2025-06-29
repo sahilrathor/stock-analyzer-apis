@@ -27,5 +27,5 @@ app.listen(PORT, () => {
     console.log(figletText);
     console.log(`Server is running on http://localhost:${PORT}`);
     // dbConnect;
-    sendTelegramMessage({ text: "Server is running" });
+    // sendTelegramMessage({ text: "Server is running" });
 });
