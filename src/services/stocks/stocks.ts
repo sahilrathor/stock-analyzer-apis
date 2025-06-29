@@ -5,7 +5,7 @@ import yFinance from "../../external-services/yahoo-finance/yahooFinance";
 class StockService {
     static async getStocks(req: Request, res: Response) {
         try {
-            const result = await pool.query("SELECT id, name, symbol, exchange, sector, industory FROM stocks");
+            const result = await pool.query("SELECT id, name, symbol, exchange, sector, industry FROM stocks");
             return res.status(200).json({
                 message: "Stocks fetched successfully",
                 stocksCount: result.rowCount,
@@ -32,7 +32,7 @@ class StockService {
     }
 
     static async addStock(req: Request, res: Response) {
-        const { name, symbol, exchange, sector, industory } = req.body;
+        const { name, symbol, exchange, sector, industry } = req.body;
 
         if (!name || !symbol) {
             return res.status(400).json({ message: "Missing field" });
@@ -40,8 +40,8 @@ class StockService {
 
         try {
             await pool.query(
-                "INSERT INTO stocks (name, symbol, exchange, sector, industory) VALUES ($1, $2, $3, $4, $5)",
-                [name, symbol, exchange || "", sector || "", industory || ""]
+                "INSERT INTO stocks (name, symbol, exchange, sector, industry) VALUES ($1, $2, $3, $4, $5)",
+                [name, symbol, exchange || "", sector || "", industry || ""]
             );
 
             return res.status(201).json({

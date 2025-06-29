@@ -76,7 +76,7 @@ class AuthService {
     static async getProfile(req: Request, res: Response) {
         const userData = req.user || {} as tokenPayloadInterface;
         try {
-            const user = await pool.query("SELECT id, name, email, create_at FROM users WHERE id = $1", [
+            const user = await pool.query("SELECT id, name, email, created_at FROM users WHERE id = $1", [
                 userData.id,
             ]);
 

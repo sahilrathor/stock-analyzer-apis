@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: stock-tracker-api
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:web
+    branch: main
+
+  - type: worker
+    name: stock-tracker-background
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:worker
+    branch: main
