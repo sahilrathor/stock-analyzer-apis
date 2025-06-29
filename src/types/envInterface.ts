@@ -12,4 +12,7 @@ export interface EnvInterface {
     PG_DATABASE: string;
     PG_USER: string;
     PG_PASSWORD: string;
+    IS_DEV: boolean;
+    DASHBOARD_URL: string;
+    APIS_URL: string;
 }

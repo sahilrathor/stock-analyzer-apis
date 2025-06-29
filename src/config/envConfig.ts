@@ -18,6 +18,11 @@ const envConfig: EnvInterface = {
     PG_DATABASE: process.env.PG_DATABASE || "postgres",
     PG_USER: process.env.PG_USER || "postgres",
     PG_PASSWORD: process.env.PG_PASSWORD || "postgres",
+
+    DASHBOARD_URL: process.env.DASHBOARD_URL || "https://stock-analyzer.onrender.com/",
+    APIS_URL: process.env.APIS_URL || "https://stock-analyzer-apis.onrender.com/",
+
+    IS_DEV: process.env.IS_DEV === "true" || false,
 };
 
 export default envConfig;

@@ -26,7 +26,6 @@ const sendTelegramMessage = async (message: TelegramMessageInterface) => {
         reply_markup: message.reply_markup || undefined
     }
 
-
     try {
         const res = await axios.post(url, payload);
         // console.log("Message sent:", res.data);

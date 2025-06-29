@@ -6,8 +6,8 @@ import routerConfig from "./config/routerConfig";
 import { corsMiddleware } from "./middlewares/cors";
 import sendTelegramMessage from "./utils/sendMessage";
 import cookieParser from "cookie-parser";
-import dbConnect from "./db/dbConnect";
-import "./types/express"
+import "./types/express";
+import { connectDb } from "./db/dbConnect";
 
 dotenv.config();
 const app = express();
@@ -26,6 +26,26 @@ app.get("/", (req: Request, res: Response) => {
 app.listen(PORT, () => {
     console.log(figletText);
     console.log(`Server is running on http://localhost:${PORT}`);
-    // dbConnect;
-    sendTelegramMessage({ text: "Server is running on port:" + PORT });
+    connectDb();
+    {
+        !envConfig.IS_DEV && sendTelegramMessage({ 
+            text: "Server started successfully",
+            reply_markup: {
+                inline_keyboard: [
+                    [
+                        {
+                            text: "GO TO DASHBOARD",
+                            url: envConfig.DASHBOARD_URL,
+                        },
+                    ],
+                    [
+                        {
+                            text: "GO TO APIS",
+                            url: envConfig.APIS_URL,
+                        },
+                    ],
+                ],
+            }
+        });
+    }
 });
