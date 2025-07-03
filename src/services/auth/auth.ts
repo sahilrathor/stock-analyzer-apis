@@ -86,6 +86,20 @@ class AuthService {
             return res.status(500).json({message: "Internal Server Error"});
         }
     }
+
+    static async getAllUsers(req: Request, res: Response) {
+        try {
+            const users = await pool.query("SELECT id, name, email, created_at FROM users");
+            return res.status(200).json({
+                message: "Users fetched successfully",
+                usersCount: users.rowCount,
+                users: users.rows,
+            });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({message: "Internal Server Error"});
+        }
+    }
 }
 
 export default AuthService;

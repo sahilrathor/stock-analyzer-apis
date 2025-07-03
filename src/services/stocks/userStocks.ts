@@ -1,14 +1,17 @@
 import { Request, Response } from "express";
 import pool from "../../db/dbConnect";
-import yFinance from "../../external-services/yahoo-finance/yahooFinance";
 
 class UserStockService {
     static async addStock(req: Request, res: Response) {
         const { stockId, quantity, buyPrice } = req.body;
         const userId = req.user?.id;
 
-        if (!stockId || !quantity || !buyPrice || !userId) {
+        if (!stockId || !quantity || !buyPrice) {
             return res.status(400).json({ message: "Missing field" });
+        }
+
+        if (!userId) {
+            return res.status(400).json({ message: "invalid token" });
         }
 
         const alreadyExists = await pool.query(
@@ -73,19 +76,24 @@ class UserStockService {
 
     static async removeStock(req: Request, res: Response) {
         const { id } = req.params;
+        const userId = req.user?.id;
+
+        if (!userId) {
+            return res.status(400).json({ message: "invalid token" });
+        }
 
         if (!id) {
             return res.status(400).json({ message: "missing field: id" });
         }
 
-        const isExists = await pool.query("SELECT id FROM user_stocks WHERE id = $1", [id]);
+        const isExists = await pool.query("SELECT id FROM user_stocks WHERE id = $1 AND user_id = $2", [id, userId]);
 
         if (isExists.rowCount === 0) {
             return res.status(400).json({ message: "Stock not found" });
         }
 
         try {
-            await pool.query("DELETE FROM user_stocks WHERE id = $1", [id]);
+            await pool.query("DELETE FROM user_stocks WHERE id = $1 AND user_id = $2", [id, userId]);
 
             return res.status(200).json({ message: "Stock deletd successhully" });
         } catch (error) {

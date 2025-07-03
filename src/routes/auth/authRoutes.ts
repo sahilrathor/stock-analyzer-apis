@@ -26,6 +26,12 @@ const authRoutes: RoutesInfoInterface = {
             handler: AuthService.getProfile,
             middlewares: [authenticateToken],
         },
+        {
+            path: "/auth/users",
+            method: "GET",
+            handler: AuthService.getAllUsers,
+            middlewares: [authenticateToken],
+        },
     ],
 };
 

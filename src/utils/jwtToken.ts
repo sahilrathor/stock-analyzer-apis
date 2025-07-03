@@ -9,10 +9,15 @@ import { tokenPayloadInterface } from "../types/userInterface";
  */
 export const generateToken = (payload: tokenPayloadInterface) => {
     return jwt.sign(payload, envConfig.JWT_SECRET, {
-        expiresIn: "1d"
+        expiresIn: "7d"
     });
 }
 
 export const verifyToken = (token: string) => {
-    return jwt.verify(token, envConfig.JWT_SECRET) as tokenPayloadInterface;
+    try {
+        return jwt.verify(token, envConfig.JWT_SECRET) as tokenPayloadInterface;
+    } catch (error) {
+        console.log("error", error);
+        return null;
+    }
 }

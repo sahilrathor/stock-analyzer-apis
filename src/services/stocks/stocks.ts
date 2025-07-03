@@ -38,6 +38,11 @@ class StockService {
             return res.status(400).json({ message: "Missing field" });
         }
 
+        const isExists = await pool.query("SELECT id FROM stocks WHERE symbol = $1", [symbol]);
+        if (isExists.rowCount !== 0) {
+            return res.status(409).json({ message: "Stock already exists with this symbol" });
+        }
+
         try {
             await pool.query(
                 "INSERT INTO stocks (name, symbol, exchange, sector, industry) VALUES ($1, $2, $3, $4, $5)",
