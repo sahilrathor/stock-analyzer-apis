@@ -8,8 +8,9 @@ import { tokenPayloadInterface } from "../types/userInterface";
  * @returns 
  */
 export const generateToken = (payload: tokenPayloadInterface) => {
+    payload.isAdmin = payload.isAdmin || false;
     return jwt.sign(payload, envConfig.JWT_SECRET, {
-        expiresIn: "7d"
+        expiresIn: payload.isAdmin ? "30d" : "7d",
     });
 }
 
