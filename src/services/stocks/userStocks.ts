@@ -52,53 +52,73 @@ class UserStockService {
         }
     }
 
-    static async getStocks(req: Request, res: Response) {
-        const userId = req.user?.id;
-
-        if (!userId) {
-            return res.status(400).json({ message: "invalid token" });
-        }
-
-        try {
-            const result = await pool.query("SELECT * FROM user_stocks WHERE user_id = $1", [userId]);
-
-            res.status(200).json({
-                message: "Stocks fetched successfully",
-                stocksCount: result.rowCount,
-                stocks: result.rows,
-            })
-            
-        } catch (error: any) {
-            console.log("getStocks error:", error);
-            return res.status(500).json({ message: "Internal Server Error" });
-        }
-    }
-
     static async removeStock(req: Request, res: Response) {
-        const { id } = req.params;
+        const stockId = req.params.stockId;
+        const sellQuantity = req.body.quantity;
         const userId = req.user?.id;
 
+        
+        
         if (!userId) {
             return res.status(400).json({ message: "invalid token" });
         }
 
-        if (!id) {
-            return res.status(400).json({ message: "missing field: id" });
+        if (!stockId) {
+            return res.status(400).json({ message: "missing field: stockId" });
         }
 
-        const isExists = await pool.query("SELECT id FROM user_stocks WHERE id = $1 AND user_id = $2", [id, userId]);
+        const isExists = await pool.query("SELECT id, quantity FROM user_stocks WHERE stock_id = $1 AND user_id = $2", [
+            stockId,
+            userId,
+        ]);
 
         if (isExists.rowCount === 0) {
             return res.status(400).json({ message: "Stock not found" });
         }
-
+        
         try {
-            await pool.query("DELETE FROM user_stocks WHERE id = $1 AND user_id = $2", [id, userId]);
+            // IT WILL DELETE COMPLETE QUANTITY
+            if (!sellQuantity || (sellQuantity && sellQuantity >= isExists.rows[0].quantity)) {
+                await pool.query("DELETE FROM user_stocks WHERE id = $1 AND user_id = $2", [stockId, userId]);
+                return res.status(200).json({ message: "Stock deletd successhully" });
+            }
+            
+            // DELETE SPECIFIC NO. OF STOCKS
+            if (sellQuantity && sellQuantity < isExists.rows[0].quantity) {
+                const prevData = isExists.rows[0];
+                const newQuantity = prevData.quantity - sellQuantity;
 
-            return res.status(200).json({ message: "Stock deletd successhully" });
+                await pool.query("UPDATE user_stocks SET quantity = $1 WHERE user_id = $2 AND stock_id = $3", [
+                    newQuantity,
+                    userId,
+                    stockId,
+                ]);
+
+                return res.status(201).json({
+                    message: "Stock updated successfully",
+                });
+            }
         } catch (error) {
             console.log("removeStock error:", error);
             return res.status(200).json({ message: "Internal Server Error" });
+        }
+    }
+
+    static async getStocks(req: Request, res: Response) {
+        const userId = req.user?.id;
+        if (!userId) {
+            return res.status(400).json({ message: "invalid token" });
+        }
+        try {
+            const result = await pool.query("SELECT * FROM user_stocks WHERE user_id = $1", [userId]);
+            res.status(200).json({
+                message: "Stocks fetched successfully",
+                stocksCount: result.rowCount,
+                stocks: result.rows,
+            });
+        } catch (error: any) {
+            console.log("getStocks error:", error);
+            return res.status(500).json({ message: "Internal Server Error" });
         }
     }
 }

@@ -12,7 +12,7 @@ const userStockRoutes: RoutesInfoInterface = {
             middlewares: [authenticateToken],
         },
         {
-            path: "/user/stocks/remove/:id",
+            path: "/user/stocks/remove/:stockId",
             method: "DELETE",
             handler: UserStockService.removeStock,
             middlewares: [authenticateToken],

