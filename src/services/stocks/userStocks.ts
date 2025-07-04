@@ -79,7 +79,7 @@ class UserStockService {
         try {
             // IT WILL DELETE COMPLETE QUANTITY
             if (!sellQuantity || (sellQuantity && sellQuantity >= isExists.rows[0].quantity)) {
-                await pool.query("DELETE FROM user_stocks WHERE id = $1 AND user_id = $2", [stockId, userId]);
+                await pool.query("DELETE FROM user_stocks WHERE stock_id = $1 AND user_id = $2", [stockId, userId]);
                 return res.status(200).json({ message: "Stock deletd successhully" });
             }
             
